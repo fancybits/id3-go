@@ -6,7 +6,8 @@ package encodedbytes
 import (
 	"bytes"
 	"errors"
-	iconv "github.com/djimenez/iconv-go"
+
+	iconv "github.com/mushroomsir/iconv"
 )
 
 const (
