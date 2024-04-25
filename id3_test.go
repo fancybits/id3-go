@@ -5,11 +5,12 @@ package id3
 
 import (
 	"bytes"
-	v2 "github.com/mikkyang/id3-go/v2"
 	"io"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	v2 "github.com/mikkyang/id3-go/v2"
 )
 
 const (
@@ -274,4 +275,35 @@ func TestUTF16CommPanic(t *testing.T) {
 		}
 		file.Close()
 	}
+}
+
+func FuzzDecoder(f *testing.F) {
+	m, err := os.ReadFile(testFile)
+	if err != nil {
+		f.Error(err)
+	}
+	f.Add(m)
+
+	// Try to discover any panics
+	f.Fuzz(func(t *testing.T, b []byte) {
+		// create a temp file and write the bytes to the file
+		tempfile, err := os.CreateTemp("", "fuzz")
+		if err != nil {
+			t.Error(err)
+		}
+		defer os.Remove(tempfile.Name())
+
+		_, err = tempfile.Write(b)
+		if err != nil {
+			t.Error(err)
+		}
+		tempfile.Close()
+
+		// open the file
+		file, err := Open(tempfile.Name())
+		if err != nil {
+			t.Error(err)
+		}
+		file.Close()
+	})
 }

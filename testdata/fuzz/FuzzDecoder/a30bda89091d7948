@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("ID30000 00TYER\xdf\xff\xff\b0000e0000000")
